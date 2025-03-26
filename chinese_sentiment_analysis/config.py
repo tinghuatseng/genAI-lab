@@ -17,3 +17,6 @@ class Config:
     
     # 運行模式
     MODE = 'train'  # 'train' 或 'predict'
+    
+    # 訓練參數
+    PATIENCE = 3  # 早停等待輪數

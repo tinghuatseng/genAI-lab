@@ -13,15 +13,15 @@ class Predictor:
     
     def predict(self, text):
         """預測文本情感"""
-        # 預處理文本
-        processed_text = self.data_processor.preprocess(text)
-        
-        # 轉換為模型輸入格式
-        # TODO: 實現文本到tensor的轉換
-        input_tensor = torch.tensor([0])  # 佔位符
-        
         with torch.no_grad():
-            output = self.model(input_tensor)
+            # 獲取BERT輸入
+            encoded_input = self.model.tokenize([text])
+            
+            # 前向傳播
+            output = self.model(
+                input_ids=encoded_input['input_ids'],
+                attention_mask=encoded_input['attention_mask']
+            )
+            
             prediction = torch.argmax(output, dim=1).item()
-        
-        return "正面" if prediction == 1 else "負面"
+            return "正面" if prediction == 1 else "負面"
