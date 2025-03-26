@@ -34,12 +34,22 @@ def download_video(video_url):
     if os.path.exists(video_path):
         os.remove(video_path)
 
+    # with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    #     ydl.download([video_url])
+     # 使用 `yt-dlp` 擷取影片 & 貼文文字
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([video_url])
-    return video_path
+        info = ydl.extract_info(video_url, download=True)  # `download=True` 表示實際下載
+
+    # 獲取貼文內容
+    post_caption = info.get("description", "").strip()  # 貼文標題/內文
+    return video_path, post_caption
 
 def extract_audio(video_path, output_audio_path):
+    output_audio_path = f"{DOWNLOAD_FOLDER}/{output_audio_path}"
     """ 從影片擷取音訊 """
+    if os.path.exists(output_audio_path):
+        os.remove(output_audio_path)
+
     command = [
         'ffmpeg', '-i', video_path, '-vn', '-acodec', 'pcm_s16le', '-ar', '16000', '-ac', '1', output_audio_path
     ]
@@ -55,10 +65,10 @@ def transcribe_audio(audio_path):
 async def transcribe_ig(request: VideoRequest):
     """ API 端點，從 JSON 請求體讀取 IG 影片 URL，並進行轉換 """
     try:
-        video_path = download_video(request.video_url)
+        video_path, post_caption = download_video(request.video_url)
         audio_path = extract_audio(video_path, AUDIO_FILE)
         transcript = transcribe_audio(audio_path)
-        return {"status": "success", "transcript": transcript}
+        return {"status": "success", "transcript": transcript, "post_caption": post_caption}  # 貼文內文}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
