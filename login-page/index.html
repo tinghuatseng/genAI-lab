@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手繪風格登入頁面</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sky-background">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="login-container">
+            <h1>歡迎回來</h1>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">使用者名稱</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">密碼</label>
+                    <input type="password" id="password" required>
+                    <div id="password-strength"></div>
+                </div>
+                <button type="submit" class="hand-drawn-btn">登入</button>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+/* 基礎設定 */
+body {
+    margin: 0;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+/* 天空背景 */
+.sky-background {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 雲朵設計 */
+.cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 20px white;
+    opacity: 0.8;
+}
+
+.cloud:nth-child(1) {
+    width: 150px;
+    height: 60px;
+    top: 20%;
+    left: 10%;
+    animation: float 15s infinite linear;
+}
+
+.cloud:nth-child(2) {
+    width: 200px;
+    height: 80px;
+    top: 30%;
+    right: 15%;
+    animation: float 20s infinite linear reverse;
+}
+
+@keyframes float {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(50px); }
+    100% { transform: translateX(0); }
+}
+
+/* 登入容器 */
+.login-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+    border: 3px solid #333;
+    /* 手繪風格邊框 */
+    border-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="%23333" stroke-width="3" stroke-dasharray="10,5" stroke-linecap="round"/></svg>') 10 round;
+}
+
+/* 表單元素 */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #333;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* 手繪風格按鈕 */
+.hand-drawn-btn {
+    background: #FFD700;
+    color: #333;
+    border: 2px solid #333;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.hand-drawn-btn:hover {
+    background: #FFC000;
+    transform: translateY(-2px);
+}
+
+/* 密碼強度提示 */
+#password-strength {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        width: 95%;
+        padding: 1rem;
+    }
+    
+    .input-group input {
+        padding: 0.6rem;
+    }
+}
