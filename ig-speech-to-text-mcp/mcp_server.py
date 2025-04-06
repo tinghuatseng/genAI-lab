@@ -4,6 +4,8 @@ import subprocess
 import whisper
 import yt_dlp
 import os
+import cv2
+import easyocr
 
 # 設定 FastAPI 伺服器
 app = FastAPI()
@@ -17,6 +19,50 @@ model = whisper.load_model("base")
 
 # 確保下載資料夾存在
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+
+def perform_ocr(image_path, languages):
+    """
+    Performs OCR on an image.
+
+    Args:
+        image_path (str): Path to the image file.
+        languages (list): List of languages to use for OCR.
+
+    Returns:
+        str: The extracted text.
+    """
+    reader = easyocr.Reader(languages,gpu="cuda:0")
+    results = reader.readtext(image_path)
+    text = " ".join([result[1] for result in results])
+    return text
+
+def extract_frames(video_path, interval):
+    """
+    Extracts frames from a video at a specified interval.
+
+    Args:
+        video_path (str): Path to the video file.
+        interval (int): Interval between frames in seconds.
+
+    Returns:
+        list: A list of paths to the extracted frames.
+    """
+    frames = []
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    
+    for i in range(0, frame_count, int(interval * fps)):
+        cap.set(cv2.CAP_PROP_POS_FRAMES, i)
+        ret, frame = cap.read()
+        if ret:
+            frame_path = f"downloads/frame_{i}.jpg"
+            cv2.imwrite(frame_path, frame)
+            frames.append(frame_path)
+        else:
+            break
+    cap.release()
+    return frames
 
 class VideoRequest(BaseModel):
     video_url: str
@@ -68,10 +114,10 @@ async def transcribe_ig(request: VideoRequest):
         video_path, post_caption = download_video(request.video_url)
         audio_path = extract_audio(video_path, AUDIO_FILE)
         transcript = transcribe_audio(audio_path)
-        return {"status": "success", "transcript": transcript, "post_caption": post_caption}  # 貼文內文}
+        frames = extract_frames(video_path, interval=5)
+        ocr_text = ""
+        for frame_path in frames:
+            ocr_text += perform_ocr(frame_path, languages=['ch_tra', 'en']) + " "
+        return {"status": "success", "transcript": transcript, "post_caption": post_caption, "ocr_text": ocr_text}  # 貼文內文}
     except Exception as e:
         return {"status": "error", "message": str(e)}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5001)
